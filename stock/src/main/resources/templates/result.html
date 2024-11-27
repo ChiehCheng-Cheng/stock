@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backtest Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f4f8;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        .message {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #007BFF;
+            background-color: #e7f3ff;
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Backtest Results</h1>
+    
+    <!-- 顯示股票代碼和策略 -->
+    <p><b>Stock Symbol:</b> <span th:text="${symbol}"></span></p>
+    <p><b>Selected Strategy:</b> <span th:text="${strategy}"></span></p>
+    
+    <!-- 動態消息 -->
+    <div class="message" th:if="${message}">
+        <p th:text="${message}"></p>
+    </div>
+    
+    <!-- 收盤價展示 -->
+    <h2>Closing Prices</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Closing Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="entry : ${closingPrices}">
+                <td th:text="${entry.key}"></td>
+                <td th:text="${entry.value}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

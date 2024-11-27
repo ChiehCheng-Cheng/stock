@@ -86,7 +86,7 @@ public class testt {
         int totalTradingDays = months * tradingDaysInMonth;
         
         //ma策略 ma5>ma10buy ma10<ma5sell
-        /*for (int i = 10; i < Math.min(prices.size(), totalTradingDays); i++) {
+        for (int i = 10; i < Math.min(prices.size(), totalTradingDays); i++) {
             double ma5 = calculateMA(prices, i, 5);
             double ma10 = calculateMA(prices, i, 10);
 
@@ -119,7 +119,7 @@ public class testt {
             sum += prices.get(i);
         }
         return sum / period;
-    }*/
+    }
     //ma策略
 
         // RSI策略 rsi>70sell rsi<30buy
@@ -171,6 +171,7 @@ private static double calculateRSI(List<Double> prices, int currentIndex, int pe
 }*/
 //rsi策略
 
+/* 
   // macd策略  DIF>MACD9買入 DIF<MACD9賣出
   //計算macd線
   List<Double> macdLine = new ArrayList<>();
@@ -251,7 +252,7 @@ private static double calculateMA(List<Double> prices, int currentIndex, int per
   return sum / period;
 }
 //macd策略
-
+*/
     
     private static void plotPortfolioValues(List<Double> portfolioValues, List<String> dates) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();

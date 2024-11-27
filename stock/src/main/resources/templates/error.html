@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+        p {
+            font-size: 1.2em;
+        }
+        .error-message {
+            background-color: #f5c6cb;
+            border: 1px solid #f1b0b7;
+            padding: 15px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Error Occurred</h1>
+    <div class="error-message">
+        <p th:text="${error}">An error has occurred, please try again later.</p>
+    </div>
+</body>
+</html>
