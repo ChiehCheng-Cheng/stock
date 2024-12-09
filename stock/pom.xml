@@ -62,6 +62,13 @@
             <artifactId>json</artifactId>
             <version>20210307</version>
         </dependency>
+
+        <!-- JFreeChart Dependency -->
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.5.3</version> <!-- 最新版本 -->
+        </dependency>
     </dependencies>
 
     <build>

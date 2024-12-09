@@ -36,6 +36,14 @@
             background-color: #e7f3ff;
             color: #0056b3;
         }
+        .chart-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .chart-container img {
+            max-width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -66,5 +74,12 @@
             </tr>
         </tbody>
     </table>
+
+    <!-- 顯示資產變化圖表 -->
+    <div class="chart-container">
+        <h2>Portfolio Value Over Time</h2>
+        <!-- 使用 Base64 編碼的圖像 -->
+        <img th:src="'data:image/png;base64,' + ${chartImage}" alt="Portfolio Value Chart">
+    </div>
 </body>
 </html>
