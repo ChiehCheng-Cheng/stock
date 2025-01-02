@@ -10,7 +10,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #1f1f1f; /* 深灰色背景 */
+            background-color: #000000; /* 黑色背景 */
             color: #e0e0e0; /* 浅灰色字體 */
             display: flex;
             justify-content: center;
@@ -71,11 +71,32 @@
             color: red;
             margin-top: 20px;
         }
+        .result {
+            margin-top: 20px;
+            color: white;
+        }
+        /* 回測信息居中且距頂部適當間距 */
+        .backtest-info {
+            margin-top: 30px; /* 設置距頂部的間距 */
+            padding: 10px;
+            background-color: #444;
+            color: #fff;
+            border-radius: 5px;
+            text-align: center;
+            width: 60%; /* 控制區塊寬度 */
+            margin-left: auto;
+            margin-right: auto;
+        }
     </style>
 </head>
 <body>
     <h1>Backtest Results</h1>
     
+    <!-- 顯示回測信息 -->
+    <div class="backtest-info">
+        <p>Backtest completed for RSI strategy from 2024-01-01 to 2025-01-01.</p>
+    </div>
+
     <!-- 顯示股票代碼和策略 -->
     <p><b>Stock Symbol:</b> <span th:text="${symbol}"></span></p>
     <p><b>Selected Strategy:</b> <span th:text="${strategy}"></span></p>
@@ -85,6 +106,13 @@
         <p th:text="${message}"></p>
     </div>
     
+    <!-- 顯示初始資金、最終報酬率和最大回撤 -->
+    <div class="result">
+        <p><b>Initial Capital:</b> <span id="initial-capital">0</span></p>
+        <p><b>Final Return (%):</b> <span id="final-return">0%</span></p>
+        <p><b>Maximum Drawdown (%):</b> <span id="max-drawdown">0%</span></p>
+    </div>
+
     <!-- 收盤價展示 -->
     <h2>Closing Prices</h2>
     <table>
@@ -112,6 +140,37 @@
         // 從後端獲取數據
         const portfolioData = /*[[${portfolioValues}]]*/ [];
 
+        // 這是計算初始資金、最終報酬率、最大回撤的函數
+        function calculateResults(data) {
+            if (data.length === 0) return;
+
+            const initialCapital = data[0].value;
+            const finalCapital = data[data.length - 1].value;
+
+            // 計算最終報酬率
+            const finalReturn = ((finalCapital - initialCapital) / initialCapital) * 100;
+
+            // 計算最大回撤
+            let maxDrawdown = 0;
+            let peak = data[0].value;
+
+            data.forEach(d => {
+                if (d.value > peak) {
+                    peak = d.value;
+                } else {
+                    const drawdown = (peak - d.value) / peak;
+                    if (drawdown > maxDrawdown) {
+                        maxDrawdown = drawdown;
+                    }
+                }
+            });
+
+            // 顯示結果
+            document.getElementById("initial-capital").textContent = initialCapital.toFixed(2);
+            document.getElementById("final-return").textContent = finalReturn.toFixed(2) + "%";
+            document.getElementById("max-drawdown").textContent = (maxDrawdown * 100).toFixed(2) + "%";
+        }
+
         if (portfolioData.length > 0) {
             // 設置畫布尺寸
             const margin = { top: 20, right: 30, bottom: 50, left: 50 };
@@ -132,6 +191,9 @@
                 d.date = parseDate(d.date);
                 d.value = +d.value; // 確保數值為數字型
             });
+
+            // 計算結果
+            calculateResults(portfolioData);
 
             // 設置 X 和 Y 軸縮放範圍
             const x = d3.scaleTime()
