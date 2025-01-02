@@ -64,7 +64,7 @@
         }
         .line {
             fill: none;
-            stroke: steelblue;
+            stroke: red; /* 改成紅色 */
             stroke-width: 2;
         }
         .error {
@@ -162,7 +162,8 @@
             svg.append("path")
                 .datum(portfolioData)
                 .attr("class", "line")
-                .attr("d", line);
+                .attr("d", line)
+                .style("stroke", "red");  // 這裡將顏色改為紅色
         } else {
             // 當數據為空時顯示消息
             d3.select("#chart-container")
