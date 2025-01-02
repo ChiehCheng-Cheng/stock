@@ -4,22 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Backtest Results</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f0f4f8;
+            margin: 0;
+            padding: 0;
+            background-color: #1f1f1f; /* 深灰色背景 */
+            color: #e0e0e0; /* 浅灰色字體 */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-direction: column;
+            height: 100vh;
+            text-align: center;
         }
         h1, h2 {
-            color: #333;
+            color: #ffffff; /* 白色標題字體 */
+        }
+        .message {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #007BFF;
+            background-color: #2c2c2c;
+            color: #007BFF;
+            border-radius: 5px;
         }
         table {
-            width: 100%;
+            width: 80%;
+            margin: 20px auto;
             border-collapse: collapse;
-            margin-top: 20px;
+            background-color: #333;
+            color: #fff;
+            border-radius: 10px;
         }
         table, th, td {
-            border: 1px solid #ccc;
+            border: 1px solid #444;
         }
         th, td {
             padding: 10px;
@@ -29,20 +49,27 @@
             background-color: #007BFF;
             color: white;
         }
-        .message {
-            margin: 20px 0;
-            padding: 10px;
-            border: 1px solid #007BFF;
-            background-color: #e7f3ff;
-            color: #0056b3;
-        }
         .chart-container {
             margin-top: 30px;
             text-align: center;
+            width: 80%;
         }
-        .chart-container img {
-            max-width: 100%;
-            height: auto;
+        #chart-container {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ddd;
+            background: #2c2c2c;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 2;
+        }
+        .error {
+            color: red;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -75,11 +102,74 @@
         </tbody>
     </table>
 
-    <!-- 顯示資產變化圖表 -->
+    <!-- 使用 D3.js 繪製資產變化圖表 -->
     <div class="chart-container">
         <h2>Portfolio Value Over Time</h2>
-        <!-- 使用 Base64 編碼的圖像 -->
-        <img th:src="'data:image/png;base64,' + ${chartImage}" alt="Portfolio Value Chart">
+        <div id="chart-container"></div>
     </div>
+
+    <script th:inline="javascript">
+        // 從後端獲取數據
+        const portfolioData = /*[[${portfolioValues}]]*/ [];
+
+        if (portfolioData.length > 0) {
+            // 設置畫布尺寸
+            const margin = { top: 20, right: 30, bottom: 50, left: 50 };
+            const width = 800 - margin.left - margin.right;
+            const height = 500 - margin.top - margin.bottom;
+
+            // 創建 SVG 畫布
+            const svg = d3.select("#chart-container")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            // 解析日期
+            const parseDate = d3.timeParse("%Y-%m-%d");
+            portfolioData.forEach(d => {
+                d.date = parseDate(d.date);
+                d.value = +d.value; // 確保數值為數字型
+            });
+
+            // 設置 X 和 Y 軸縮放範圍
+            const x = d3.scaleTime()
+                .domain(d3.extent(portfolioData, d => d.date))
+                .range([0, width]);
+
+            const y = d3.scaleLinear()
+                .domain([d3.min(portfolioData, d => d.value) * 0.95, d3.max(portfolioData, d => d.value) * 1.05])
+                .range([height, 0]);
+
+            // 添加 X 軸
+            svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x))
+                .selectAll("text")
+                .attr("transform", "rotate(-45)")
+                .style("text-anchor", "end");
+
+            // 添加 Y 軸
+            svg.append("g")
+                .call(d3.axisLeft(y));
+
+            // 繪製折線圖
+            const line = d3.line()
+                .x(d => x(d.date))
+                .y(d => y(d.value));
+
+            svg.append("path")
+                .datum(portfolioData)
+                .attr("class", "line")
+                .attr("d", line);
+        } else {
+            // 當數據為空時顯示消息
+            d3.select("#chart-container")
+                .append("p")
+                .text("No data available to display.")
+                .style("color", "red");
+        }
+    </script>
 </body>
 </html>

@@ -4,6 +4,145 @@ import stock.stock.StockService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.Map;
+
+@Controller
+@RequestMapping("/stock")
+public class StockController {
+
+    private final StockService stockService;
+
+    // 使用構造函數注入 StockService
+    public StockController(StockService stockService) {
+        this.stockService = stockService;
+    }
+
+    /**
+     * 執行回測並返回結果頁面
+     *
+     * @param symbol    股票代碼
+     * @param strategy  回測策略
+     * @param startDate 開始日期 (yyyy-MM-dd)
+     * @param endDate   結束日期 (yyyy-MM-dd)
+     * @param model     用於傳遞資料到視圖
+     * @return 視圖名稱
+     */
+    @GetMapping("/backtest")
+    public String runBacktest(
+            @RequestParam("symbol") String symbol,
+            @RequestParam("strategy") String strategy,
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate,
+            Model model) {
+        try {
+            // 獲取指定日期範圍內的股票收盤價數據
+            Map<String, Double> closingPrices = stockService.fetchStockData(symbol, startDate, endDate);
+
+            // 根據策略執行回測
+            List<Map<String, Object>> portfolioValues = stockService.performBacktest(closingPrices, strategy);
+
+            // 設置模型數據供視圖使用
+            model.addAttribute("portfolioValues", portfolioValues);
+            model.addAttribute("symbol", symbol);
+            model.addAttribute("strategy", strategy);
+            model.addAttribute("startDate", startDate);
+            model.addAttribute("endDate", endDate);
+
+            // 顯示回測完成訊息
+            String message = "Backtest completed for " + strategy + " strategy from " + startDate + " to " + endDate + ".";
+            model.addAttribute("message", message);
+
+            return "result"; // 返回結果頁面名稱
+        } catch (Exception e) {
+            // 捕獲錯誤並顯示錯誤頁面
+            model.addAttribute("error", "Error occurred: " + e.getMessage());
+            e.printStackTrace();
+            return "error";
+        }
+    }
+}
+
+
+
+
+/*package stock.stock.Controller;
+
+import stock.stock.StockService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.Map;
+
+@Controller
+@RequestMapping("/stock")
+public class StockController {
+
+    private final StockService stockService;
+
+    // 使用構造函數注入 StockService
+    public StockController(StockService stockService) {
+        this.stockService = stockService;
+    }
+
+    /**
+     * 執行回測並返回結果頁面
+     *
+     * @param symbol   股票代碼
+     * @param strategy 回測策略
+     * @param model    用於傳遞資料到視圖
+     * @return 視圖名稱
+     
+    @GetMapping("/backtest")
+    public String runBacktest(
+            @RequestParam("symbol") String symbol,
+            @RequestParam("strategy") String strategy,
+            Model model) {
+        try {
+            // 獲取股票收盤價數據
+            Map<String, Double> closingPrices = stockService.fetchStockData(symbol);
+
+            // 根據策略執行回測
+            List<Map<String, Object>> portfolioValues = stockService.performBacktest(closingPrices, strategy);
+
+            // 設置模型數據供視圖使用
+            model.addAttribute("portfolioValues", portfolioValues);
+            model.addAttribute("symbol", symbol);
+            model.addAttribute("strategy", strategy);
+
+            // 顯示回測完成訊息
+            String message = "Backtest completed for " + strategy + " strategy.";
+            model.addAttribute("message", message);
+
+            return "result"; // 返回結果頁面名稱
+        } catch (Exception e) {
+            // 捕獲錯誤並顯示錯誤頁面
+            model.addAttribute("error", "Error occurred: " + e.getMessage());
+            e.printStackTrace();
+            return "error";
+        }
+    }
+}
+
+
+*/
+
+
+
+
+/*package stock.stock.Controller;
+
+import stock.stock.StockService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -29,7 +168,7 @@ public class StockController {
      * @param strategy 回測策略
      * @param model    模型數據
      * @return 視圖名稱
-     */
+     
     @GetMapping("/backtest")
     public String runBacktest(
             @RequestParam String symbol,
@@ -66,7 +205,7 @@ public class StockController {
         }
     }
 }
-
+*/
 
 
 

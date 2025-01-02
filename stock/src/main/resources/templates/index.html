@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,60 +9,68 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f0f4f8;
-            display: flex; /* 使用 Flexbox 將內容置中 */
-            justify-content: center; /* 水平居中 */
-            align-items: center; /* 垂直居中 */
-            flex-direction: column; /* 內容垂直排列 */
-            height: 100vh; /* 確保頁面填滿螢幕 */
-            text-align: center; /* 置中文字 */
+            background-color: #1f1f1f; /* 深灰色背景 */
+            color: #e0e0e0; /* 浅灰色字體 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            text-align: center;
         }
         h1 {
-            color: #333;
+            color: #ffffff; /* 白色標題字體 */
         }
         form {
-            background-color: #ffffff;
+            background-color: #2c2c2c; /* 深灰色表單背景 */
             padding: 20px 30px;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* 陰影效果 */
             margin-bottom: 20px;
         }
         input, select, button {
             font-size: 16px;
             padding: 10px;
             margin: 10px 0;
-            border: 1px solid #ccc;
+            border: 1px solid #444; /* 深灰色邊框 */
             border-radius: 5px;
             width: 100%;
-            max-width: 300px; /* 限制元件最大寬度 */
+            max-width: 300px;
+            background-color: #333; /* 深灰色背景 */
+            color: #fff; /* 白色文字 */
         }
         button {
-            background-color: #007BFF;
+            background-color: #007BFF; /* 藍色按鈕 */
             color: white;
             cursor: pointer;
             border: none;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #0056b3; /* 深藍色按鈕懸浮 */
         }
         .results {
             margin-top: 20px;
             width: 80%;
+            background-color: #2c2c2c; /* 結果區域背景色 */
+            padding: 20px;
+            border-radius: 10px;
         }
         table {
             margin: 20px auto;
             border-collapse: collapse;
             width: 100%;
+            background-color: #333; /* 深灰色背景 */
+            color: #fff; /* 白色文字 */
         }
         table, th, td {
-            border: 1px solid #ccc;
+            border: 1px solid #444;
         }
         th, td {
             padding: 10px;
             text-align: center;
         }
         th {
-            background-color: #007BFF;
+            background-color: #007BFF; /* 藍色表頭 */
             color: white;
         }
         .error {
@@ -84,27 +92,34 @@
             <option value="macd">MACD</option>
         </select>
         <br>
+        <label for="startDate">Start Date (yyyy-MM-dd):</label>
+        <input type="date" id="startDate" name="startDate" required>
+        <br>
+        <label for="endDate">End Date (yyyy-MM-dd):</label>
+        <input type="date" id="endDate" name="endDate" required>
+        <br>
         <button type="submit">Run Backtest</button>
     </form>
 
     <!-- 動態展示回測結果 -->
-    <div class="results" th:if="${closingPrices}">
+    <div class="results" th:if="${portfolioValues}">
         <h2>Backtest Results</h2>
         <p><strong>Stock Symbol:</strong> <span th:text="${symbol}"></span></p>
         <p><strong>Selected Strategy:</strong> <span th:text="${strategy}"></span></p>
         <p><strong>Message:</strong> <span th:text="${message}"></span></p>
+        <p><strong>Date Range:</strong> <span th:text="${startDate}"></span> to <span th:text="${endDate}"></span></p>
 
-        <h3>Closing Prices</h3>
+        <h3>Portfolio Values</h3>
         <table>
             <thead>
                 <tr>
                     <th>Date</th>
-                    <th>Closing Price</th>
+                    <th>Portfolio Value</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="entry : ${closingPrices}">
-                    <td th:text="${entry.key}"></td>
+                <tr th:each="entry : ${portfolioValues}">
+                    <td th:text="${entry.date}"></td>
                     <td th:text="${entry.value}"></td>
                 </tr>
             </tbody>
